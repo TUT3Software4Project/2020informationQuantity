@@ -119,15 +119,7 @@ public class Frequencer implements FrequencerInterface{
         //   suffixArray[ 2]= 0:CBA
         // のようになるべきである。
 
-        for (int i = 0; i < suffixArray.length - 1; i++) {
-            for (int j = suffixArray.length - 1; j > i; j--) {
-                if (suffixCompare(suffixArray[j-1], suffixArray[j]) == 1) {
-                    int tmp = suffixArray[j - 1];
-                    suffixArray[j - 1] = suffixArray[j];
-                    suffixArray[j] = tmp;
-                }
-            }
-        }
+        heapSort(suffixArray);
     }
 
     // ここから始まり、指定する範囲までは変更してはならないコードである。
@@ -260,7 +252,7 @@ public class Frequencer implements FrequencerInterface{
             int mid = (min + max) / 2;
             int result = targetCompare(suffixArray[mid], start, end);
             if (result == 1) {
-                max = mid - 1;
+                max = mid;
             }
             else if (result == -1) {
                 min = mid + 1;
@@ -320,6 +312,44 @@ public class Frequencer implements FrequencerInterface{
         return index;
     }
 
+    private void heapSort(int[] array) {
+        int n = array.length;
+
+        for (int i = n / 2 - 1; i >= 0; i--) {
+            constructHeap(array, n, i);
+        }
+
+        for (int i = n - 1; i >= 0; i--) {
+            if (suffixCompare(array[0], array[i]) == 1) {
+                int tmp = array[0];
+                array[0] = array[i];
+                array[i] = tmp;
+
+                constructHeap(array, i - 1, 0);
+            }
+        }
+    }
+
+    private void constructHeap(int[] array, int n, int root) {
+        int max = root;
+        int left = 2 * root + 1;
+        int right = 2 * root + 2;
+
+        if (left < n && suffixCompare(array[left], array[max]) == 1) {
+            max = left;
+        }
+        if (right < n && suffixCompare(array[right], array[max]) == 1) {
+            max = right;
+        }
+
+        if (max != root) {
+            int tmp = array[root];
+            array[root] = array[max];
+            array[max] = tmp;
+
+            constructHeap(array, n, max);
+        }
+    }
 
     // Suffix Arrayを使ったプログラムのホワイトテストは、
     // privateなメソッドとフィールドをアクセスすることが必要なので、
