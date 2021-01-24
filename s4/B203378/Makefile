@@ -1,15 +1,15 @@
 all:
-	javac Hello.java -classpath "../.."
-	javac Frequencer.java -classpath "../.."
-	javac InformationEstimator.java -classpath "../.."
-	javac TestCase.java -classpath "../.."
+	javac -encoding UTF-8 Hello.java -classpath "../.."
+	javac -encoding UTF-8 Frequencer.java -classpath "../.."
+	javac -encoding UTF-8 InformationEstimator.java -classpath "../.."
+	javac -encoding UTF-8 TestCase.java -classpath "../.."
 
 # 利用する場合は s4.学籍番号/プログラム名 になるように書き換える
 run:
-	java -classpath "../.." s4.B203379/Hello
-#	java -classpath "../.." s4.B203379/Frequencer
-#	java -classpath "../.." s4.B203379/InformationEstimator
-#	java -classpath "../.." s4.B203379/TestCase
+	java -classpath "../.." s4.B203378/Hello
+	java -classpath "../.." s4.B203378/Frequencer
+	java -classpath "../.." s4.B203378/InformationEstimator
+	java -classpath "../.." s4.B203378/TestCase
 
 # runやrunHelloなどがファイル名ではなくターゲット名であることをmakeに伝えるための定義
 .PNOHY: run runHello runFrequencer runInformationEstimator runTestCase
@@ -20,16 +20,16 @@ run:
 # 下に書いてある「*.classをコンパイルするための定義」を使って
 # コンパイルが実行された後にプログラムを実行する。
 runHello: Hello.class
-	java -classpath "../.." s4.B203379/Hello
+	java -classpath "../.." s4.B203378/Hello
 
 runFrequencer: Frequencer.class
-	java -classpath "../.." s4.B203379/Frequencer
+	java -classpath "../.." s4.B203378/Frequencer
 
 runInformationEstimator: InformationEstimator.class
-	java -classpath "../.." s4.B203379/InformationEstimator
+	java -classpath "../.." s4.B203378/InformationEstimator
 
 runTestCase: TestCase.class
-	java -classpath "../.." s4.B203379/TestCase
+	java -classpath "../.." s4.B203378/TestCase
 
 
 # *.classをコンパイルするための定義
