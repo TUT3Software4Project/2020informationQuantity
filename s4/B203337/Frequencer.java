@@ -122,6 +122,45 @@ public class Frequencer implements FrequencerInterface{
         heapSort(suffixArray);
     }
 
+    private void heapSort(int[] array) {
+        int n = array.length;
+
+        for (int i = n / 2 - 1; i >= 0; i--) {
+            constructHeap(array, n, i);
+        }
+
+        for (int i = n - 1; i >= 0; i--) {
+            if (suffixCompare(array[0], array[i]) == 1) {
+                int tmp = array[0];
+                array[0] = array[i];
+                array[i] = tmp;
+
+                constructHeap(array, i - 1, 0);
+            }
+        }
+    }
+
+    private void constructHeap(int[] array, int n, int root) {
+        int max = root;
+        int left = 2 * root + 1;
+        int right = 2 * root + 2;
+
+        if (left < n && suffixCompare(array[left], array[max]) == 1) {
+            max = left;
+        }
+        if (right < n && suffixCompare(array[right], array[max]) == 1) {
+            max = right;
+        }
+
+        if (max != root) {
+            int tmp = array[root];
+            array[root] = array[max];
+            array[max] = tmp;
+
+            constructHeap(array, n, max);
+        }
+    }
+
     // ここから始まり、指定する範囲までは変更してはならないコードである。
 
     public void setTarget(byte [] target) {
@@ -247,22 +286,33 @@ public class Frequencer implements FrequencerInterface{
         //
         // ここにコードを記述せよ。
         //
-        int min = 0, max = suffixArray.length, index = max;
-        while (min < max) {
-            int mid = (min + max) / 2;
-            int result = targetCompare(suffixArray[mid], start, end);
-            if (result == 1) {
-                max = mid;
+        return binarySearchStartIndex(0, suffixArray.length, start, end);
+    }
+
+    private int binarySearchStartIndex(int min, int max, int start, int end) {
+        if (max - min == 1) {
+            if (targetCompare(suffixArray[min], start, end) == 0) {
+                return min;
             }
-            else if (result == -1) {
-                min = mid + 1;
-            }
-            else if (result == 0) {
-                index = mid;
-                max = mid;
+            else {
+                return max;
             }
         }
-        return index;
+        else {
+            int mid = (min + max) / 2;
+            int result = targetCompare(suffixArray[mid], start, end);
+            if (result == -1) {
+                return binarySearchStartIndex(mid, max, start, end);
+            }
+            else if (result == 0) {
+                return binarySearchStartIndex(min, mid, start, end);
+            }
+            else if (result == 1) {
+                return binarySearchStartIndex(min, mid, start, end);
+            }
+        }
+
+        return 0;
     }
 
     private int subByteEndIndex(int start, int end) {
@@ -294,61 +344,33 @@ public class Frequencer implements FrequencerInterface{
         //
         //　ここにコードを記述せよ
         //
-        int min = 0, max = suffixArray.length, index = max;
-        while (min < max) {
+        return binarySearchEndIndex(0, suffixArray.length, start, end);
+    }
+
+    private int binarySearchEndIndex(int min, int max, int start, int end) {
+        if (max - min == 1) {
+            if (targetCompare(suffixArray[min], start, end) == 1) {
+                return min;
+            }
+            else {
+                return max;
+            }
+        }
+        else {
             int mid = (min + max) / 2;
             int result = targetCompare(suffixArray[mid], start, end);
-            if (result == 1) {
-                index = mid;
-                max = mid;
-            }
-            else if (result == -1) {
-                min = mid + 1;
+            if (result == -1) {
+                return binarySearchEndIndex(mid, max, start, end);
             }
             else if (result == 0) {
-                min = mid + 1;
+                return binarySearchEndIndex(mid, max, start, end);
+            }
+            else if (result == 1) {
+                return binarySearchEndIndex(min, mid, start, end);
             }
         }
-        return index;
-    }
 
-    private void heapSort(int[] array) {
-        int n = array.length;
-
-        for (int i = n / 2 - 1; i >= 0; i--) {
-            constructHeap(array, n, i);
-        }
-
-        for (int i = n - 1; i >= 0; i--) {
-            if (suffixCompare(array[0], array[i]) == 1) {
-                int tmp = array[0];
-                array[0] = array[i];
-                array[i] = tmp;
-
-                constructHeap(array, i - 1, 0);
-            }
-        }
-    }
-
-    private void constructHeap(int[] array, int n, int root) {
-        int max = root;
-        int left = 2 * root + 1;
-        int right = 2 * root + 2;
-
-        if (left < n && suffixCompare(array[left], array[max]) == 1) {
-            max = left;
-        }
-        if (right < n && suffixCompare(array[right], array[max]) == 1) {
-            max = right;
-        }
-
-        if (max != root) {
-            int tmp = array[root];
-            array[root] = array[max];
-            array[max] = tmp;
-
-            constructHeap(array, n, max);
-        }
+        return suffixArray.length;
     }
 
     // Suffix Arrayを使ったプログラムのホワイトテストは、

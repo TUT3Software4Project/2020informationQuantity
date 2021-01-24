@@ -48,7 +48,7 @@ public class Frequencer implements FrequencerInterface{
 			}
 		}
 	}
-
+/*
 	private void insert(int a){
 		suffixArray[num++]=a;
 		int i=num,j=i/2;
@@ -60,10 +60,10 @@ public class Frequencer implements FrequencerInterface{
 			j = i/2;
 		}
 	}
-
+*/
 	/*
 	 *    * 先頭の要素を取り除き、返す
-	 *       */
+	 *       *//*
 	private int deletemin(){
 		int r=suffixArray[0];
 		suffixArray[0]=suffixArray[--num];
@@ -79,7 +79,8 @@ public class Frequencer implements FrequencerInterface{
 			j = i*2;
 		}
 		return r;
-	}
+	}*/
+	
 
 	private int suffixCompare(int i, int j) {
 		// suffixCompareはソートのための比較メソッドである。
@@ -124,6 +125,29 @@ public class Frequencer implements FrequencerInterface{
 			return 0;
 		}
 	}
+	
+	private void quick_sort(int[] data, int left, int right) {
+		if (left >= right)
+			return;
+		int p = data[(left+right) / 2];
+		int l = left, r = right, tmp;
+		while(l<=r) {
+           		while(suffixCompare(data[l], p) == -1) { 
+				l++; 
+			}
+            		while(suffixCompare(data[r], p) == 1) { 
+				r--; 
+			}
+            		if (l <= r) {
+                		tmp = data[l]; 
+				data[l] = data[r]; 
+				data[r] = tmp;
+                		l++; r--;
+            		}
+        	}
+        	quick_sort(data, left, r);  // ピボットより左側をクイックソート
+       	        quick_sort(data, l, right); // ピボットより右側をクイックソート
+	}
 
 	public void setSpace(byte []space) {
 		// suffixArrayの前処理は、setSpaceで定義せよ。
@@ -150,7 +174,7 @@ public class Frequencer implements FrequencerInterface{
 		//   suffixArray[ 1]= 1:BA
 		//   suffixArray[ 2]= 0:CBA
 		// のようになるべきである。
-
+	/*	
 		for (int i = 0; i < suffixArray.length - 1; i++) {
 			for (int j = suffixArray.length - 1; j > i; j--) {
 				if (suffixCompare(suffixArray[j-1], suffixArray[j]) == 1) {
@@ -159,7 +183,8 @@ public class Frequencer implements FrequencerInterface{
 					suffixArray[j] = tmp;
 				}
 			}
-		}
+		}*/
+		quick_sort(suffixArray, 0, space.length-1);
 	}
 
 	// ここから始まり、指定する範囲までは変更してはならないコードである。
@@ -290,39 +315,44 @@ public class Frequencer implements FrequencerInterface{
 
 		/*２分探索*/
 		
-		int left = 0, right = suffixArray.length, mid = (left + right) / 2;
+		int left = 0, right = suffixArray.length-1, mid = (left + right) / 2;
 		while (left <= right) {
 			mid = (left + right) / 2;
-			if (mid == suffixArray.length-1)
-				return suffixArray.length;
+		//	if (mid == suffixArray.length-1)
+		//		return suffixArray.length;
 
 			if(targetCompare(suffixArray[mid], start, end) == 0) {
+				if (mid == 0)
+					return 0;
 				if(targetCompare(suffixArray[mid-1], start, end) != 0)
-				   return mid; 
+				   	return mid; 
 				right = mid - 1;	
 			}
 				
 			else if (targetCompare(suffixArray[mid], start, end) == 1) {
-				if(targetCompare(suffixArray[mid+1], start, end) == 0)
-					return mid+1;
-
-				left = mid + 1;
-			}	  
-			else if (targetCompare(suffixArray[mid], start, end) == -1) {
+				if (mid == suffixArray.length-1)
+					return suffixArray.length;
 				if(targetCompare(suffixArray[mid+1], start, end) == 0)
 					return mid+1;
 				right = mid - 1;
+			}	  
+			else if (targetCompare(suffixArray[mid], start, end) == -1) {
+				if (mid == suffixArray.length-1)
+					return suffixArray.length;
+				if(targetCompare(suffixArray[mid+1], start, end) == 0)
+					return mid+1;
+				left = mid + 1;
 			}
 				
 
 		}
-		   /*	
+		 /*  	
 		   for (int i = 0; i < suffixArray.length; i++) {
 		   if (targetCompare(suffixArray[i], start, end) == 0) {
 		   return i;
 		   }
 		   }*/
-
+		//
 		return mid; //このコードは変更しなければならない。
 	}
 
@@ -357,36 +387,47 @@ public class Frequencer implements FrequencerInterface{
 
 		/*2分探索*/
 		
-		int left = 0, right = suffixArray.length, mid = (left + right) / 2;
+		int left = 0, right = suffixArray.length-1, mid = (left + right) / 2;
 		while (left <= right) {
 			mid = (left + right) / 2;
-			if (mid == suffixArray.length-1)
-				return suffixArray.length;
+			//if (mid == 0)
+			//	return 0;
+			//if (mid == suffixArray.length-1)
+			//	return suffixArray.length;
 
 			if(targetCompare(suffixArray[mid], start, end) == 0) {
-				if(targetCompare(suffixArray[mid-1], start, end) != 0)
+				if (mid == suffixArray.length-1)
+					return suffixArray.length;
+				if(targetCompare(suffixArray[mid+1], start, end) != 0)
 					return mid+1;	
 				left = mid + 1;
 			}
 			else if (targetCompare(suffixArray[mid], start, end) == 1) {
+				if (mid == 0)
+					return 0;
 				if(targetCompare(suffixArray[mid-1], start, end) == 0)
 					return mid;
 				right = mid - 1;
 			}	  
 			else if (targetCompare(suffixArray[mid], start, end) == -1) {
+				if (mid == 0)
+					return 0;
 				if(targetCompare(suffixArray[mid-1], start, end) == 0)
 					return mid;
 				left = mid + 1;
 			}
 		}	
-			/*
+		/*	
 			   for (int i = 0; i < suffixArray.length; i++) {
 			   if (targetCompare(suffixArray[i], start, end) == 1) {
 			   return i;
 			   }
-			   }*/
-		
-		return mid; // この行は変更しなければならない、
+			   }
+		return suffixArray.length;*/
+		if (mid == suffixArray.length-1)
+			return suffixArray.length;
+		else
+			return mid; //このコードは変更しなければならない。
 
 	}
 
