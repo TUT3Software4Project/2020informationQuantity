@@ -114,6 +114,14 @@ public class Frequencer implements FrequencerInterface {
 		quickSuffixSort(tr+1, r);
 	}
 
+	private boolean isSortedSA() {
+		if(mySpace.length <= 1) return true; // already sort
+		final int checker = rapSC(0, 1);
+		for(int i = 1; i < mySpace.length - 1; i++) if(rapSC(i, i+1) != checker) return false;
+		if(checker == 1) for(int i = 0; i < mySpace.length / 2; i++) swapSA(i, mySpace.length - 1 - i); // 辞書順に並べ直す
+		return true;
+	}
+
 	public void setSpace(byte []space) {
 		// suffixArrayの前処理は、setSpaceで定義せよ。
 		mySpace = space; if(mySpace.length>0) spaceReady = true;
@@ -124,7 +132,7 @@ public class Frequencer implements FrequencerInterface {
 			suffixArray[i] = i; // Please note that each suffix is expressed by one integer.
 		}
 
-		if (spaceReady) quickSuffixSort(0, mySpace.length-1);
+		if (spaceReady && !isSortedSA()) quickSuffixSort(0, mySpace.length-1);
 	}
 
 	// ここから始まり、指定する範囲までは変更してはならないコードである。
